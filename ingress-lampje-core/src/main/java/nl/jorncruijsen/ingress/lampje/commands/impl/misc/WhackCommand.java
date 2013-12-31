@@ -8,11 +8,9 @@ public class WhackCommand implements GlobalCommand {
 
   @Override
   public void trigger(final MessageChannel chat, final Message message) {
-    String username = message.getSender();
+    final String username = message.getSender();
+    final String target = message.getText().contains(" ") ? message.getText().split(" ", 2)[1] : "nobody in particular";
 
-    final String target = message.getText().split(" ", 2)[1];
-
-    chat.sendMessage(username + " slaps " + target + " around a bit with a large trout");
+    chat.sendMessage(String.format("%s slaps %s around a bit with a large trout", username, target));
   }
-
 }

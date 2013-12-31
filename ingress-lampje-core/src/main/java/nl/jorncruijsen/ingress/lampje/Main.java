@@ -22,37 +22,40 @@ public class Main {
     xmppService.init(xmppProperties);
 
     // Initialize the GroupMe message service
+    /** Nothing yet **/
 
     // Add message services to the client
     messageClient.addMessagingService(xmppService);
 
-    // Create a global message listener which will receive all messages
-    final MessageListener globalMessageListener = new LampjeMessageListener();
+    // Initialize the database
+    DBManager.init(args[2], args[3]);
 
     Thread.sleep(2000);
 
-    // Loop over all channels and add the global message listener
-    final ChannelManager channelManager = messageClient.getChannelManager();
-    for (final MessageChannel channel : channelManager) {
-      channel.addMessageListener(globalMessageListener);
-    }
-
-    System.out.println("Fully initialized.");
-
-    // Run indefinitely.
-    final Thread t = new Thread() {
+    // Run the listeners
+    new Thread() {
       @Override
       public void run() {
-        synchronized (this) {
-          try {
-            this.wait();
-          } catch (final InterruptedException e) {
-            e.printStackTrace();
-          }
+        // Create a global bot command message listener which will receive all messages
+        final MessageListener globalCommandListener = new BotCommandListener();
+
+        // Loop over all channels and add the global message listener
+        final ChannelManager channelManager = messageClient.getChannelManager();
+        for (final MessageChannel channel : channelManager) {
+          channel.addMessageListener(globalCommandListener);
         }
-      };
-    };
-    t.start();
-    t.join();
+
+        System.out.println("Fully initialized.");
+      }
+    }.start();
+
+    /* Run indefinitely. */
+    while (true) {
+      try {
+        Thread.sleep(60 * 1000 * 60);
+      } catch (final InterruptedException e1) {
+        e1.printStackTrace();
+      }
+    }
   }
 }

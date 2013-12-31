@@ -100,18 +100,13 @@ public class BotCommandListener implements MessageListener {
     System.out.println(String.format("<-- %s: %s", message.getSender(), message.getText()));
 
     final String body = message.getText();
-    final String firstWord = body.split(" ", 2)[0];
-    final BotCommand cmd = commands.get(firstWord.toLowerCase());
+    final String firstWord = body.split(" ", 2)[0].toLowerCase();
+
+    BotCommand cmd = commands.get(firstWord);
 
     if (cmd != null) {
-      System.out.println(String.format("- Triggering command %s"));
-      new Thread(new Runnable() {
-
-        @Override
-        public void run() {
-          cmd.trigger(chat, message);
-        }
-      }).start();
+      System.out.println(String.format("- Triggering command %s", cmd.getClass().getSimpleName()));
+      cmd.trigger(chat, message);
     } else {
       if (firstWord.substring(0, 1).equalsIgnoreCase("!")) {
         chat.sendMessage("command not found, type !help to get a list containing the available commands");
