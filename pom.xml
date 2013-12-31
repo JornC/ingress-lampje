@@ -29,6 +29,7 @@
       </activation>
       <modules>
         <module>ingress-lampje-core</module>
+        <module>ingress-lampje-shared</module>
       </modules>
     </profile>
   </profiles>
