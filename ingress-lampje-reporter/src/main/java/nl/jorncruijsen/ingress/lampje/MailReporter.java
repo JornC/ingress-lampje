@@ -17,6 +17,7 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
+import nl.jorncruijsen.ingress.lampje.collections.ValueComparator;
 import nl.jorncruijsen.ingress.lampje.domain.game.Portal;
 import nl.jorncruijsen.ingress.lampje.domain.report.Contributor;
 import nl.jorncruijsen.ingress.lampje.domain.report.GlobalStatistics;
@@ -25,7 +26,6 @@ import nl.jorncruijsen.ingress.lampje.util.ReportService;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.ingress.enlbot.collections.ValueComparator;
 import com.sun.mail.smtp.SMTPMessage;
 import com.vividsolutions.jts.io.ParseException;
 
@@ -131,8 +131,8 @@ public class MailReporter {
 
     final ArrayList<Contributor> contributors = DBRepository.getContributors();
 
-    final Contributor c = DBRepository.getContributorByEmail("locoslennie@gmail.com");
-    reporter.sendPlayerReport(c);
+    //    final Contributor c = DBRepository.getContributorByEmail("");
+    //    reporter.sendPlayerReport(c);
 
     //    for (final Contributor c : contributors) {
     //      if (c.getEmail() == null) {
