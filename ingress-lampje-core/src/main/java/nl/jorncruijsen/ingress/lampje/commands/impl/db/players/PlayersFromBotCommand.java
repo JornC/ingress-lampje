@@ -8,7 +8,7 @@ import nl.jorncruijsen.ingress.lampje.commands.BotCommand;
 import nl.jorncruijsen.ingress.lampje.domain.game.Player;
 import nl.jorncruijsen.ingress.lampje.domain.game.TEAM;
 import nl.jorncruijsen.messaging.domain.Message;
-import nl.jorncruijsen.messaging.providers.MessageChannel;
+import nl.jorncruijsen.messaging.providers.AbstractMessageChannel;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -19,7 +19,7 @@ public class PlayersFromBotCommand implements BotCommand {
   public static final String PARAM_MAXLEVEL = "-maxlevel";
 
   @Override
-  public void trigger(final MessageChannel chat, final Message message) {
+  public void trigger(final AbstractMessageChannel chat, final Message message) {
     final String body = message.getText();
     final String[] splittedBody = body.split(" ");
     String text = null;

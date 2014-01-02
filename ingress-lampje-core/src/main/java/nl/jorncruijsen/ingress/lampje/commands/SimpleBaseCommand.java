@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.jorncruijsen.messaging.domain.Message;
-import nl.jorncruijsen.messaging.providers.MessageChannel;
+import nl.jorncruijsen.messaging.providers.AbstractMessageChannel;
 
 public abstract class SimpleBaseCommand implements BotCommand {
   private static final String SEPERATION = " ";
@@ -21,7 +21,7 @@ public abstract class SimpleBaseCommand implements BotCommand {
   }
 
   @Override
-  public void trigger(final MessageChannel chat, final Message message) {
+  public void trigger(final AbstractMessageChannel chat, final Message message) {
     final ArrayList<String> flags = new ArrayList<>();
 
     String body = message.getText();

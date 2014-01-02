@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import nl.jorncruijsen.ingress.lampje.DBRepository;
 import nl.jorncruijsen.ingress.lampje.domain.game.Player;
 import nl.jorncruijsen.messaging.domain.Message;
-import nl.jorncruijsen.messaging.providers.MessageChannel;
+import nl.jorncruijsen.messaging.providers.AbstractMessageChannel;
 
 public class EditPlayerLevel extends EditPlayerInfoBaseCommand {
   @Override
-  boolean validate(final MessageChannel chat, final String data) {
+  boolean validate(final AbstractMessageChannel chat, final String data) {
     String text = null;
     int level = 0;
     try {
@@ -35,7 +35,7 @@ public class EditPlayerLevel extends EditPlayerInfoBaseCommand {
   }
 
   @Override
-  public void trigger(final MessageChannel chat, final Message message) {
+  public void trigger(final AbstractMessageChannel chat, final Message message) {
     final String body = message.getText();
     final String[] splittedBody = body.split(" ", 3);
     String text = null;

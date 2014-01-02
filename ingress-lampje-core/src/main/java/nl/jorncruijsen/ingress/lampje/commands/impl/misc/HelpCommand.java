@@ -3,12 +3,12 @@ package nl.jorncruijsen.ingress.lampje.commands.impl.misc;
 import nl.jorncruijsen.ingress.lampje.commands.BotCommand;
 import nl.jorncruijsen.ingress.lampje.commands.impl.db.players.PlayersFromBotCommand;
 import nl.jorncruijsen.messaging.domain.Message;
-import nl.jorncruijsen.messaging.providers.MessageChannel;
+import nl.jorncruijsen.messaging.providers.AbstractMessageChannel;
 
 public class HelpCommand implements BotCommand {
 
   @Override
-  public void trigger(final MessageChannel chat, final Message message) {
+  public void trigger(final AbstractMessageChannel chat, final Message message) {
     final StringBuilder builder = new StringBuilder();
 
     final String playersFromArgs = "(" + PlayersFromBotCommand.PARAM_MINLEVEL + "[level]) " + "(" + PlayersFromBotCommand.PARAM_MAXLEVEL + "[level]) " + "(" + PlayersFromBotCommand.PARAM_PRIMARYLOCATION + ") " + "(" + PlayersFromBotCommand.PARAM_SECONDARYLOCATION + ")";

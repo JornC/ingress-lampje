@@ -212,7 +212,6 @@ public class ReportService {
     final String large = String.format(AREA_IMAGE_WITH_MARKERS_URL, encodedPortals, markers);
 
     if(markers.isEmpty() || large.length() > 2048) {
-      System.out.println("image too large" + large.length());
       return String.format(AREA_IMAGE_URL, encodedPortals);
     } else {
       return large;

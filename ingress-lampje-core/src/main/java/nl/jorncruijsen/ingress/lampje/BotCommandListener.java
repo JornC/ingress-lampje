@@ -24,7 +24,7 @@ import nl.jorncruijsen.ingress.lampje.commands.impl.misc.PingCommand;
 import nl.jorncruijsen.ingress.lampje.commands.impl.misc.WhackCommand;
 import nl.jorncruijsen.messaging.domain.Message;
 import nl.jorncruijsen.messaging.listeners.MessageListener;
-import nl.jorncruijsen.messaging.providers.MessageChannel;
+import nl.jorncruijsen.messaging.providers.AbstractMessageChannel;
 
 public class BotCommandListener implements MessageListener {
   Map<String, BotCommand> commands = new HashMap<>();
@@ -96,7 +96,7 @@ public class BotCommandListener implements MessageListener {
   }
 
   @Override
-  public void handleMessage(final MessageChannel chat, final Message message) {
+  public void handleMessage(final AbstractMessageChannel chat, final Message message) {
     System.out.println(String.format("<-- %s: %s", message.getSender(), message.getText()));
 
     final String body = message.getText();
