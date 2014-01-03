@@ -7,10 +7,7 @@ import nl.jorncruijsen.ingress.lampje.commands.BotCommand;
 import nl.jorncruijsen.ingress.lampje.commands.impl.db.players.AddPlayerCommand;
 import nl.jorncruijsen.ingress.lampje.commands.impl.db.players.EditPlayerLevel;
 import nl.jorncruijsen.ingress.lampje.commands.impl.db.players.EditPlayerPrimaryLocation;
-import nl.jorncruijsen.ingress.lampje.commands.impl.db.players.EditPlayerSecondaryLocation;
 import nl.jorncruijsen.ingress.lampje.commands.impl.db.players.PlayerInfoCommand;
-import nl.jorncruijsen.ingress.lampje.commands.impl.db.players.PlayerReportCommand;
-import nl.jorncruijsen.ingress.lampje.commands.impl.db.players.PlayersFromBotCommand;
 import nl.jorncruijsen.ingress.lampje.commands.impl.db.reports.CityInfoCommand;
 import nl.jorncruijsen.ingress.lampje.commands.impl.db.reports.DBInfoCommand;
 import nl.jorncruijsen.ingress.lampje.commands.impl.db.reports.NavigationCommand;
@@ -37,10 +34,6 @@ public class BotCommandListener implements MessageListener {
     // Player info commands
     commands.put("!playerinfo", new PlayerInfoCommand());
     commands.put("!pi", new PlayerInfoCommand());
-    commands.put("!alliesfrom", new PlayersFromBotCommand());
-    commands.put("!enemiesfrom", new PlayersFromBotCommand());
-    commands.put("!pr", new PlayerReportCommand());
-    commands.put("!playerreport", new PlayerReportCommand());
     commands.put("!activity", new PlayerAreaCommand());
 
     // Portal info commands
@@ -63,28 +56,10 @@ public class BotCommandListener implements MessageListener {
 
     // Edit level commands
     commands.put("!editlevel", new EditPlayerLevel());
-    commands.put("!update", new EditPlayerLevel());
 
     // Add primary location commands
-    commands.put("!loc1", new EditPlayerPrimaryLocation());
-    commands.put("!a1", new EditPlayerPrimaryLocation());
-    commands.put("!addlocation1", new EditPlayerPrimaryLocation());
-    commands.put("!addprimary", new EditPlayerPrimaryLocation());
-    commands.put("!addprimarylocation", new EditPlayerPrimaryLocation());
-    commands.put("!addlocationprimary", new EditPlayerPrimaryLocation());
-
-    commands.put("!e1", new EditPlayerPrimaryLocation());
-    commands.put("!editlocation1", new EditPlayerPrimaryLocation());
-    commands.put("!editprimary", new EditPlayerPrimaryLocation());
-    commands.put("!editprimarylocation", new EditPlayerPrimaryLocation());
-    commands.put("!editlocationprimary", new EditPlayerPrimaryLocation());
-
-    // Add secondary location commands
-    commands.put("!loc2", new EditPlayerSecondaryLocation());
-    commands.put("!addlocation2", new EditPlayerSecondaryLocation());
-    commands.put("!addsecondary", new EditPlayerSecondaryLocation());
-    commands.put("!addlocationsecondary", new EditPlayerSecondaryLocation());
-    commands.put("!addsecondarylocation", new EditPlayerSecondaryLocation());
+    commands.put("!loc", new EditPlayerPrimaryLocation());
+    commands.put("!setlocation", new EditPlayerPrimaryLocation());
 
     // Misc
     commands.put("!slap", new WhackCommand());
@@ -97,6 +72,7 @@ public class BotCommandListener implements MessageListener {
 
   @Override
   public void handleMessage(final AbstractMessageChannel chat, final Message message) {
+    // TODO Logging shouldn't be here.
     System.out.println(String.format("<-- %s: %s", message.getSender(), message.getText()));
 
     final String body = message.getText();

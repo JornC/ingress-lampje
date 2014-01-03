@@ -35,8 +35,8 @@ public class ReportService {
       + "Enlightened: %s\n"
       + "Resistance: %s";
 
-  private static final String AREA_IMAGE_WITH_MARKERS_URL = "http://maps.googleapis.com/maps/api/staticmap?size=512x512&path=weight:3%%7Cfillcolor:0x00AA0066%%7Ccolor:0xFFFFFF00%%7Cenc:%s&%s&sensor=false";
-  private static final String AREA_IMAGE_URL = "http://maps.googleapis.com/maps/api/staticmap?size=512x512&path=weight:3%%7Cfillcolor:0x00AA0066%%7Ccolor:0xFFFFFF00%%7Cenc:%s&sensor=false";
+  private static final String AREA_IMAGE_WITH_MARKERS_URL = "http://maps.googleapis.com/maps/api/staticmap?size=640x640&path=weight:3%%7Cfillcolor:0x00AA0066%%7Ccolor:0xFFFFFF00%%7Cenc:%s&%s&sensor=false";
+  private static final String AREA_IMAGE_URL = "http://maps.googleapis.com/maps/api/staticmap?size=640x640&path=weight:3%%7Cfillcolor:0x00AA0066%%7Ccolor:0xFFFFFF00%%7Cenc:%s&sensor=false";
 
   private static final String SINGLE_PORTAL_MINIMAL = "#%s %s";
 
@@ -109,13 +109,18 @@ public class ReportService {
     return String.format(PORTAL_INFO_REPORT, portalInfo.getPortalName(), portalInfo.getPortalAddress(), portalInfo.getPortalCity(), StringUtils.join(ls, ", "));
   }
 
+  private static final String CITY_CONCISE_REPORT = "City info for the past %s days:"
+      + "\nQuery: %s"
+      + "\nActivity: %s";
+
   private static final String CITY_REPORT = "City info for the past %s days:"
       + "\nQuery: %s"
       + "\nDistinct attackers: %s"
       + "\nRecorded attacks: %s (%.1f/day)"
       + "\nContributors in this area: %s"
       + "\n5 most active enemies: %s"
-      + "\n5 most active portals: %s";
+      + "\n5 most active portals: %s"
+      + "\nActivity: %s";
 
   private static final String CITY_SINGLE_ACTIVITY_REPORT = "%s (%sx)";
 
@@ -129,8 +134,12 @@ public class ReportService {
 
   private static final String AREA_ACTIVITY_CONCISE = "%s portals tracked in this area.\n%s";
 
-  public static String reportCityInfo(final CityInfo cityInfo) {
-    return String.format(CITY_REPORT, cityInfo.getDayDiff(), cityInfo.getCityName(), cityInfo.getAttackers(), cityInfo.getAttacks(), cityInfo.getAttacks() / (float)cityInfo.getDayDiff(), cityInfo.getContributors(), getMostActiveAttackers(cityInfo), getMostActivePortals(cityInfo));
+  public static String reportCityInfo(final CityInfo cityInfo, String shortUrl, boolean imageOnly) {
+    if(imageOnly) {
+      return String.format(CITY_CONCISE_REPORT, cityInfo.getDayDiff(), cityInfo.getCityName(), shortUrl);
+    } else {
+      return String.format(CITY_REPORT, cityInfo.getDayDiff(), cityInfo.getCityName(), cityInfo.getAttackers(), cityInfo.getAttacks(), cityInfo.getAttacks() / (float)cityInfo.getDayDiff(), cityInfo.getContributors(), getMostActiveAttackers(cityInfo), getMostActivePortals(cityInfo), shortUrl);
+    }
   }
 
   private static String getMostActivePortals(final CityInfo cityInfo) {

@@ -8,9 +8,6 @@ public class BeerCommand implements GlobalCommand {
   private final String[] NON_ALCOHOLIC_DRINKS = new String[] { "a cola", "a fanta", "a cassis", "an iced tea", "a lemon lime" };
   private final String PEOPLE_NOT_DRINKING_ALCOHOL = ",Serrie,Serrie_L8,";
 
-  /**
-   * TODO Fix for non-partychat
-   */
   @Override
   public void trigger(final AbstractMessageChannel chat, final Message message) {
     final String[] parts = message.getText().split(" ", 2);

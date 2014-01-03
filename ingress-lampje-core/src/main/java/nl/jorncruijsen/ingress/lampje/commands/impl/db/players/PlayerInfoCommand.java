@@ -1,11 +1,11 @@
 package nl.jorncruijsen.ingress.lampje.commands.impl.db.players;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import nl.jorncruijsen.ingress.lampje.DBRepository;
@@ -17,7 +17,7 @@ import nl.jorncruijsen.ingress.lampje.domain.game.TEAM;
 import org.apache.commons.lang.StringUtils;
 
 public class PlayerInfoCommand extends SimpleBaseCommand {
-  private static DateFormat formatter = DateFormat.getDateTimeInstance();
+  private static final int LOWER_LIMIT = 10;
 
   public PlayerInfoCommand() {
     super(2);
@@ -30,37 +30,20 @@ public class PlayerInfoCommand extends SimpleBaseCommand {
     try {
       final Player player = DBRepository.getPlayer(name, true);
 
-      if(player == null) {
+      if (player == null) {
         return name + " not found.";
       }
 
       final StringBuilder builder = new StringBuilder();
-      builder.append(TEAM.ENLIGHTENED.equals(player.getTeam()) ? "Ally " : "Enemy ");
+      builder.append(TEAM.ENLIGHTENED.equals(player.getTeam()) ? "ENL " : "RES ");
       builder.append(player.getName());
-      builder.append(String.format(" (L%s%s)", player.getLevel() == 0 ? "?" : player.getLevel(), player.getAp() != 0 ? String.format(", %.1fmil+ AP", player.getAp() / 1000000d) : ""));
+      builder.append(String.format(" (L%s)", player.getLevel() == 0 ? "?" : player.getLevel()));
 
       if (player.getLocationPrimary() != null) {
         builder.append(String.format(" from %s.", player.getLocationPrimary()));
       }
 
-      if (player.getLocationSecondary() != null) {
-        builder.append(String.format(" Locations active: %s.", player.getLocationSecondary()));
-      }
-
-      if (player.getLastSeen() != null) {
-        builder.append(String.format(" Last update: %s.", DateFormat.getDateInstance().format(player.getLastSeen())));
-      }
-
-      final ArrayList<ActivityReport> reports = player.getReports();
-      @SuppressWarnings("unused")
-      final ArrayList<ActivityReport> ownedReports = player.getOwnedReports();
-      if(reports.size() > 0) {
-        final ActivityReport ar = reports.get(0);
-        builder.append(String.format("\r\nLast known location: %s, %s, %s, (%s)", ar.getPortalName(), ar.getPortalAddress(), ar.getPortalCity(), formatter.format(reports.get(0).getDate())));
-      } else if(player.getTeam() == TEAM.RESISTANCE) {
-        builder.append("\nNo known recent location. See http://yogh.nl/lampje/");
-      }
-
+      // Cover thy eyes
       final Map<String, Integer> map = new TreeMap<String, Integer>() {
         private static final long serialVersionUID = 2088279151147577353L;
 
@@ -75,7 +58,7 @@ public class PlayerInfoCommand extends SimpleBaseCommand {
       };
 
       for (final ActivityReport report : player.getReports()) {
-        if(report.getPortalCity() == null) {
+        if (report.getPortalCity() == null) {
           continue;
         }
 
@@ -83,11 +66,21 @@ public class PlayerInfoCommand extends SimpleBaseCommand {
       }
 
       for (final ActivityReport report : player.getOwnedReports()) {
-        if(report.getPortalCity() == null) {
+        if (report.getPortalCity() == null) {
           continue;
         }
 
         map.put(report.getPortalCity(), map.get(report.getPortalCity()) + 1);
+      }
+
+      final Set<String> filter = new HashSet<String>();
+      for (final Entry<String, Integer> entry : map.entrySet()) {
+        if (entry.getValue() < LOWER_LIMIT) {
+          filter.add(entry.getKey());
+        }
+      }
+      for (final String key : filter) {
+        map.remove(key);
       }
 
       final String[] locations = new String[map.size()];
@@ -97,11 +90,14 @@ public class PlayerInfoCommand extends SimpleBaseCommand {
         i++;
       }
 
-      builder.append("\r\nReports in: " + StringUtils.join(locations, ", "));
+      if (locations.length > 0) {
+        builder.append("\r\nReports (min. 10) in: " + StringUtils.join(locations, ", "));
+      } else {
+        builder.append("\r\nNo reports (<10 reports are not shown).");
+      }
 
       return builder.toString();
     } catch (final SQLException e) {
-      //      ChatUtil.sendMessageToMaster("DB gone..");
       return "I lost the database! :(";
     }
   }
