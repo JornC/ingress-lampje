@@ -198,8 +198,6 @@ public class MailRetriever {
   }
 
   private static String findReport(final Message message) throws IOException, MessagingException {
-    // (String) ((IMAPBodyPart) ((MimeMultipart)
-    // message.getContent()).getBodyPart(0)).getContent();
     final IMAPBodyPart content = (IMAPBodyPart) ((MimeMultipart) message.getContent()).getBodyPart(0);
 
     if (content.getContent() instanceof String) {
