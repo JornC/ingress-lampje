@@ -508,7 +508,7 @@ public class DBRepository {
     return playerReport;
   }
 
-  public static ArrayList<Portal> getLocationLessPortals(final int limit) throws SQLException {
+  public static ArrayList<Portal> getLocationlessPortals(final int limit) throws SQLException {
     final ArrayList<Portal> portals = new ArrayList<>();
 
     try (Connection con = DBManager.createConnection()) {

@@ -157,7 +157,7 @@ public class MailReporter {
       // Get and configure the mail message
       final Message msg = getPlayerReportMessage(report);
 
-      System.out.println("Mailing to [stub]: " + c.getName() + " > " + c.getEmail());
+      System.out.println("Mailing to: " + c.getName() + " > " + c.getEmail());
 
       //      msg.setRecipient(Message.RecipientType.TO, new InternetAddress("jorncruijsen@gmail.com"));
       msg.setRecipient(Message.RecipientType.TO, new InternetAddress(c.getEmail()));
