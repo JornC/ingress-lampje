@@ -10,7 +10,7 @@ import nl.jorncruijsen.ingress.lampje.util.ReportService;
 
 public class DBInfoCommand extends SimpleBaseCommand {
   @Override
-  protected String doCommand(final String[] splitBody, final List<String> flags) {
+  protected String doCommand(final String[] splitBody, final List<String> flags) throws Exception {
     try {
       final int playerNum = DBRepository.getPlayerNum();
       final int reportNum = DBRepository.getReportNum();
@@ -22,7 +22,7 @@ public class DBInfoCommand extends SimpleBaseCommand {
       return ReportService.reportDBInfo(playerNum, reportNum, contributorNum, cityNum, portalNum, firstReportDate);
     } catch (final SQLException e) {
       e.printStackTrace();
-      return "Could not find database.";
+      throw new Exception("Database not connected to bot.");
     }
   }
 }

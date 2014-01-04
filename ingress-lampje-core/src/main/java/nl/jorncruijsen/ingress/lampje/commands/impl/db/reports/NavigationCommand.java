@@ -17,7 +17,7 @@ public class NavigationCommand extends SimpleBaseCommand implements GlobalComman
   }
 
   @Override
-  protected String doCommand(final String[] splitBody, final List<String> flags) {
+  protected String doCommand(final String[] splitBody, final List<String> flags) throws Exception {
     try {
       final PortalReportInfo portalInfo = DBRepository.getPortalInfo(splitBody[1]);
       return ReportService.reportNavigationInfo(portalInfo);
@@ -25,6 +25,6 @@ public class NavigationCommand extends SimpleBaseCommand implements GlobalComman
       e.printStackTrace();
     }
 
-    return "Database is afk. [reported]";
+    throw new Exception("Database not connected to bot.");
   }
 }

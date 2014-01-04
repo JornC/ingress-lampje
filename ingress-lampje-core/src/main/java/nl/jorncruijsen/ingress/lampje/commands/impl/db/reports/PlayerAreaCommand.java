@@ -18,7 +18,7 @@ public class PlayerAreaCommand extends SimpleBaseCommand {
   }
 
   @Override
-  protected String doCommand(final String[] splitBody, final List<String> flags) {
+  protected String doCommand(final String[] splitBody, final List<String> flags) throws Exception {
     final String[] relevantParts = splitBody[1].split(" ", 2);
 
     final String playerName = relevantParts.length == 1 ? "" : relevantParts[0];
@@ -44,10 +44,10 @@ public class PlayerAreaCommand extends SimpleBaseCommand {
 
       return ReportService.reportAreaActivityConcise(portals, ShortURLRetriever.I.getShortUrl(longUrl));
     } catch (final SQLException e) {
-      return "Database ran into a brick wall [error reported].";
+      throw new Exception("Database not connected to bot.");
     } catch (final Exception e) {
       e.printStackTrace();
-      return "Something mucked up while trying to parse the found portals. [error reported]";
+      throw new Exception("Something mucked up while trying to parse the found portals.");
     }
   }
 

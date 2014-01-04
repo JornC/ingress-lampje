@@ -25,7 +25,7 @@ public class HelpCommand implements BotCommand {
     + "!editlevel [agentname] [level]\r\n"
     + "!setlocation [agentname] [location]\r\n"
 
-    + ">> Lampje report forward (We need more contributors)\r\n"
+    + "\r\n>> Lampje report forward (We need more contributors!):\r\n"
     + "http://yogh.nl/lampje/\r\n"
 
     + "\r\n>> Miscellaneous:\r\n"

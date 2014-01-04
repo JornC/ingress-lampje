@@ -16,7 +16,7 @@ public class AddPlayerCommand extends SimpleBaseCommand {
   }
 
   @Override
-  protected String doCommand(final String[] splitBody, final List<String> flags) {
+  protected String doCommand(final String[] splitBody, final List<String> flags) throws Exception {
     final TEAM team = parseFactionFromAbbreviation(splitBody[1]);
     if (team == null) {
       return "invalid faction";

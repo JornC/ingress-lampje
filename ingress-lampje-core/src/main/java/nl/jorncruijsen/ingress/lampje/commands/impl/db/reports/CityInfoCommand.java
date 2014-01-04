@@ -24,7 +24,7 @@ public class CityInfoCommand extends SimpleBaseCommand {
   }
 
   @Override
-  protected String doCommand(final String[] splitBody, final List<String> flags) {
+  protected String doCommand(final String[] splitBody, final List<String> flags) throws Exception {
     String commandString = splitBody[1];
 
     final Calendar instance = Calendar.getInstance();
@@ -51,9 +51,9 @@ public class CityInfoCommand extends SimpleBaseCommand {
       e.printStackTrace();
       return "City could not be found";
     } catch (UnsupportedEncodingException e) {
-      return "Could not encode image";
+      throw new Exception("Could not encode image");
     } catch (ParseException e) {
-      return "Could not parse image";
+      throw new Exception("Could not parse image");
     }
   }
 }

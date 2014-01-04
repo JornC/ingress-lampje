@@ -24,7 +24,7 @@ public class PlayerInfoCommand extends SimpleBaseCommand {
   }
 
   @Override
-  protected String doCommand(final String[] splitBody, final List<String> flags) {
+  protected String doCommand(final String[] splitBody, final List<String> flags) throws SQLException {
     final String name = splitBody[1];
 
     try {
@@ -98,7 +98,7 @@ public class PlayerInfoCommand extends SimpleBaseCommand {
 
       return builder.toString();
     } catch (final SQLException e) {
-      return "I lost the database! :(";
+      throw new SQLException("I lost the database! :(");
     }
   }
 

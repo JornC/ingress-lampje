@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.jorncruijsen.ingress.lampje.DBRepository;
+import nl.jorncruijsen.ingress.lampje.LampjeException;
 import nl.jorncruijsen.ingress.lampje.commands.SimpleBaseCommand;
 import nl.jorncruijsen.ingress.lampje.domain.game.Portal;
 import nl.jorncruijsen.ingress.lampje.retriever.ShortURLRetriever;
@@ -20,7 +21,7 @@ public class PortalImageCommand extends SimpleBaseCommand {
   }
 
   @Override
-  protected String doCommand(final String[] splitBody, final List<String> flags) {
+  protected String doCommand(final String[] splitBody, final List<String> flags) throws LampjeException {
     try {
       final ArrayList<Portal> portalInfo = DBRepository.getTopPortals(splitBody[1], DEFAULT_LIMIT);
       final String reportPortalImageUrl = ReportService.reportPortalImageUrl(portalInfo);
@@ -32,6 +33,6 @@ public class PortalImageCommand extends SimpleBaseCommand {
       e.printStackTrace();
     }
 
-    return "Database is afk. [reported]";
+    throw new LampjeException(LampjeException.DATABASE_ERROR);
   }
 }

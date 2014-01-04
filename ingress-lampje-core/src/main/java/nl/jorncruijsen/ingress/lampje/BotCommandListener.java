@@ -22,11 +22,16 @@ import nl.jorncruijsen.ingress.lampje.commands.impl.misc.WhackCommand;
 import nl.jorncruijsen.messaging.domain.Message;
 import nl.jorncruijsen.messaging.listeners.MessageListener;
 import nl.jorncruijsen.messaging.providers.AbstractMessageChannel;
+import nl.jorncruijsen.messaging.providers.MessageChannel;
 
 public class BotCommandListener implements MessageListener {
-  Map<String, BotCommand> commands = new HashMap<>();
+  private final Map<String, BotCommand> commands = new HashMap<>();
 
-  public BotCommandListener() {
+  private final MessageChannel ownerChannelFinal;
+
+  public BotCommandListener(final MessageChannel ownerChannelFinal) {
+    this.ownerChannelFinal = ownerChannelFinal;
+
     // Spam commands
     commands.put("!ping", new PingCommand());
     commands.put("!beer", new BeerCommand());
@@ -73,7 +78,7 @@ public class BotCommandListener implements MessageListener {
   @Override
   public void handleMessage(final AbstractMessageChannel chat, final Message message) {
     // TODO Logging shouldn't be here.
-    System.out.println(String.format("<-- %s: %s", message.getSender(), message.getText()));
+    System.out.println(String.format("<-- %s - %s: %s", chat.getChannelId(), message.getSender(), message.getText()));
 
     final String body = message.getText();
     final String firstWord = body.split(" ", 2)[0].toLowerCase();
@@ -82,11 +87,15 @@ public class BotCommandListener implements MessageListener {
 
     if (cmd != null) {
       System.out.println(String.format("- Triggering command %s", cmd.getClass().getSimpleName()));
-      cmd.trigger(chat, message);
-    } else {
-      if (firstWord.substring(0, 1).equalsIgnoreCase("!")) {
-        chat.sendMessage("command not found, type !help to get a list containing the available commands");
+
+      try {
+        cmd.trigger(chat, message);
+      } catch(Exception e) {
+        e.printStackTrace();
+        chat.sendMessage("Error occurred while trying to execute the command - %s [error reported to admin]", e.getMessage());
+        ownerChannelFinal.sendMessage("Exception while executing a command! %s", e.getMessage());
       }
+
     }
   }
 }

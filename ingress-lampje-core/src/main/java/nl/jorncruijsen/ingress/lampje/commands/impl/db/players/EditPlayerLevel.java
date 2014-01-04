@@ -35,7 +35,7 @@ public class EditPlayerLevel extends EditPlayerInfoBaseCommand {
   }
 
   @Override
-  public void trigger(final AbstractMessageChannel chat, final Message message) {
+  public void trigger(final AbstractMessageChannel chat, final Message message) throws Exception {
     final String body = message.getText();
     final String[] splittedBody = body.split(" ", 3);
     String text = null;
@@ -52,13 +52,6 @@ public class EditPlayerLevel extends EditPlayerInfoBaseCommand {
             final int level = originalPlayer.getLevel();
             originalPlayer.setLevel(Integer.parseInt(data));
             DBRepository.updatePlayer(originalPlayer);
-            // catch (SQLException e) {
-            // // TODO Auto-generated catch block
-            // text =
-            // "Server made a database booboo while trying to edit the agent information. Try again later. Contact admin if the problem persists.";
-            // // TODO Auto-generated catch block
-            // e.printStackTrace();
-            // }
             Player updatedPlayer = null;
             updatedPlayer = DBRepository.getPlayer(nickname);
 
@@ -69,8 +62,8 @@ public class EditPlayerLevel extends EditPlayerInfoBaseCommand {
           }
 
         } catch (final SQLException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
+          throw e;
         }
       }
     } else {

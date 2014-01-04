@@ -21,7 +21,7 @@ public abstract class SimpleBaseCommand implements BotCommand {
   }
 
   @Override
-  public void trigger(final AbstractMessageChannel chat, final Message message) {
+  public void trigger(final AbstractMessageChannel chat, final Message message) throws Exception {
     final ArrayList<String> flags = new ArrayList<>();
 
     String body = message.getText();
@@ -45,7 +45,6 @@ public abstract class SimpleBaseCommand implements BotCommand {
     }
 
     final String result = doCommand(splitBody, flags);
-
     chat.sendMessage(result);
   }
 
@@ -55,8 +54,9 @@ public abstract class SimpleBaseCommand implements BotCommand {
    * @param splitBody
    * 
    * @return Status string.
+   * @throws Exception
    */
-  protected abstract String doCommand(String[] splitBody, List<String> flags);
+  protected abstract String doCommand(String[] splitBody, List<String> flags) throws Exception;
 
   /**
    * Return a String that indicates the command syntax is wrong.
