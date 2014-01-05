@@ -13,7 +13,6 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
@@ -129,19 +128,20 @@ public class MailReporter {
 
     reporter.fetchNationalStats();
 
-    final ArrayList<Contributor> contributors = DBRepository.getContributors();
+    // final ArrayList<Contributor> contributors =
+    // DBRepository.getContributors();
 
-    //    final Contributor c = DBRepository.getContributorByEmail("");
-    //    reporter.sendPlayerReport(c);
+    // final Contributor c = DBRepository.getContributorByEmail("");
+    // reporter.sendPlayerReport(c);
 
-    //    for (final Contributor c : contributors) {
-    //      if (c.getEmail() == null) {
-    //        System.out.println("No email for " + c.getName());
-    //        continue;
-    //      }
+    // for (final Contributor c : contributors) {
+    // if (c.getEmail() == null) {
+    // System.out.println("No email for " + c.getName());
+    // continue;
+    // }
     //
-    //      reporter.sendPlayerReport(c);
-    //    }
+    // reporter.sendPlayerReport(c);
+    // }
   }
 
   public void sendPlayerReport(final Contributor c) throws ParseException, IOException {
@@ -159,7 +159,6 @@ public class MailReporter {
 
       System.out.println("Mailing to: " + c.getName() + " > " + c.getEmail());
 
-      //      msg.setRecipient(Message.RecipientType.TO, new InternetAddress("jorncruijsen@gmail.com"));
       msg.setRecipient(Message.RecipientType.TO, new InternetAddress(c.getEmail()));
       msg.setFrom(new InternetAddress("no-reply@yogh.nl", "Lampje"));
       msg.setReplyTo(new InternetAddress[] { new InternetAddress("no-reply@yogh.nl") });
@@ -250,19 +249,6 @@ public class MailReporter {
     msg.setHeader("Content-Type", content.getContentType());
 
     return msg;
-  }
-
-  private static MimeBodyPart getImageAttachment(final String cid, final byte[] base64ImageContent) throws MessagingException {
-    final InternetHeaders headers = new InternetHeaders();
-    headers.addHeader("Content-Type", "image/png");
-    headers.addHeader("Content-Transfer-Encoding", "base64");
-
-    final MimeBodyPart imagePart = new MimeBodyPart(headers, base64ImageContent);
-    imagePart.setContentID("<" + cid + ">");
-    imagePart.setDisposition(MimeBodyPart.INLINE);
-    imagePart.setFileName(cid + ".png");
-
-    return imagePart;
   }
 
   @SuppressWarnings("rawtypes")
