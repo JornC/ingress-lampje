@@ -42,6 +42,7 @@ public abstract class SimpleBaseCommand implements BotCommand {
 
     if (splitBody.length < expected) {
       chat.sendMessage(getInvalidCommandSyntaxError());
+      return;
     }
 
     final String result = doCommand(splitBody, flags);
