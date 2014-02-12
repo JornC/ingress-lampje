@@ -1,5 +1,7 @@
 # Compiled source #
 *.class
+*.jar
+*.war
 
 # Eclipse files #
 /.metadata/

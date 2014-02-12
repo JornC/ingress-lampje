@@ -135,6 +135,12 @@ public class MailRetriever {
     final int agentNameIdx = report.indexOf("Agent Name:") + 11;
     final String agentName = report.substring(agentNameIdx, report.indexOf("\r", agentNameIdx));
 
+    try {
+      DBRepository.insertContributorByEmail(agentName);
+    } catch(SQLException e) {
+
+    }
+
     final int factionIdx = report.indexOf("Faction:") + 8;
     final String faction = report.substring(factionIdx, report.indexOf("\r", factionIdx));
 
@@ -227,6 +233,12 @@ public class MailRetriever {
     message.setFlag(Flag.ANSWERED, true);
 
     System.out.println("Sending confirmation " + confirmationCode + " to " + replyEmail);
+
+    try {
+      DBRepository.insertContributorByEmail(replyEmail);
+    } catch (SQLException e) {
+      System.out.println("Could not insert contributor");
+    }
 
     final Message reply = new SMTPMessage(session);
     reply.setRecipient(Message.RecipientType.TO, new InternetAddress(replyEmail));

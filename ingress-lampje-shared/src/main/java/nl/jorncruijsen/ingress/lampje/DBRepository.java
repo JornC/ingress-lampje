@@ -28,7 +28,7 @@ import nl.jorncruijsen.ingress.lampje.domain.report.PlayerReport;
  */
 public class DBRepository {
   // Contributors
-  private static final String INSERT_CONTRIBUTOR = "INSERT IGNORE INTO lampje.contributors (agent_name) VALUES (?)";
+  private static final String INSERT_CONTRIBUTOR = "INSERT IGNORE INTO lampje.contributors (agent_name, email) VALUES (?, ?)";
   private static final String SELECT_CONTRIBUTORS = "SELECT * FROM lampje.contributors";
 
   // Player
@@ -51,9 +51,9 @@ public class DBRepository {
   private static final String SELECT_OWNED_REPORTS_QUERY = "SELECT * FROM lampje.reports, lampje.portals WHERE report_origin_name=? AND reports.portal_id = portals.id AND date > DATE(NOW() - INTERVAL 1 MONTH) ORDER BY date DESC;";
   private static final String INSERT_DAMAGE_REPORT_QUERY = "INSERT INTO lampje.reports (portal_attacker_name, portal_raw_address, date, report_origin_name, portal_id) VALUES(?, ?, ?, ?, ?)";
   private static final String INERT_GEO_INFO = "INSERT INTO lampje.portals (portal_name, portal_city, portal_address, portal_lon, portal_lat) VALUES(?, ?, ?, ?, ?)";
-  private static final String SELECT_PLAYER_REPORTS = "SELECT COUNT(*) as count, portal_city, portal_attacker_name FROM lampje.reports, lampje.portals WHERE report_origin_name=? AND reports.portal_id = portals.id GROUP BY portal_city, portal_attacker_name";
-  private static final String SELECT_PLAYER_PORTALS = "SELECT COUNT(*) as count, portal_name, portal_city, portal_lon, portal_lat FROM lampje.reports, lampje.portals WHERE report_origin_name=? AND reports.portal_id = portals.id GROUP BY portal_name, portal_city, portal_address";
-  private static final String SELECT_PLAYER_CITY_PORTALS = "SELECT count(*) as count, portal_name, portal_lon, portal_lat FROM lampje.reports, lampje.portals WHERE (report_origin_name=? OR portal_attacker_name=?) AND portal_city=? AND reports.portal_id = portals.id GROUP BY portal_name, portal_address ORDER BY count DESC";
+  private static final String SELECT_PLAYER_REPORTS = "SELECT COUNT(*) as count, portal_city, portal_attacker_name FROM lampje.reports, lampje.portals WHERE report_origin_name=? AND date > DATE(NOW() - INTERVAL 1 MONTH) AND reports.portal_id = portals.id GROUP BY portal_city, portal_attacker_name";
+  private static final String SELECT_PLAYER_PORTALS = "SELECT COUNT(*) as count, portal_name, portal_city, portal_lon, portal_lat FROM lampje.reports, lampje.portals WHERE report_origin_name=? AND reports.date > DATE(NOW() - INTERVAL 1 MONTH) AND reports.portal_id = portals.id GROUP BY portal_name, portal_city, portal_address";
+  private static final String SELECT_PLAYER_CITY_PORTALS = "SELECT count(*) as count, portal_name, portal_lon, portal_lat FROM lampje.reports, lampje.portals WHERE (report_origin_name=? OR portal_attacker_name=?) AND date > DATE(NOW() - INTERVAL 1 MONTH) AND portal_city=? AND reports.portal_id = portals.id GROUP BY portal_name, portal_address ORDER BY count DESC";
   private static final String SELECT_CITY_PORTALS = "SELECT count(*) as count, portal_name, portal_lon, portal_lat FROM lampje.reports, lampje.portals WHERE portal_city=? AND reports.portal_id = portals.id GROUP BY portal_name, portal_address ORDER BY count DESC";
 
   // Portal info
@@ -255,10 +255,10 @@ public class DBRepository {
     return -1;
   }
 
-  @SuppressWarnings("unused")
-  private static void insertContributor(final Connection con, final String agentName) throws SQLException {
+  private static void insertContributor(final Connection con, final String agentName, String email) throws SQLException {
     try (PreparedStatement ps = con.prepareStatement(INSERT_CONTRIBUTOR)) {
       ps.setString(1, agentName);
+      ps.setString(2, email);
 
       if (ps.execute()) {
         System.out.println("New contributor added! [" + agentName + "]");
@@ -644,5 +644,17 @@ public class DBRepository {
     }
 
     return null;
+  }
+
+  public static void insertContributorByName(String name) throws SQLException {
+    try (final Connection conn = DBManager.createConnection()) {
+      insertContributor(conn, name, null);
+    }
+  }
+
+  public static void insertContributorByEmail(String email) throws SQLException {
+    try (final Connection conn = DBManager.createConnection()) {
+      insertContributor(conn, null, email);
+    }
   }
 }

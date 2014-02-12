@@ -61,8 +61,7 @@ public class Main {
     new Thread() {
       @Override
       public void run() {
-        // Create a global bot command message listener which will receive all
-        // messages
+        // Create a global bot command message listener which will receive all messages
         final MessageListener globalCommandListener = new BotCommandListener(ownerChannelFinal);
 
         // Loop over all channels and add the global message listener
@@ -81,15 +80,16 @@ public class Main {
 
     ownerChannel.sendMessage("Lampje has been initialized.");
 
-    /* Run indefinitely. */
-    while (true) {
-      try {
-        MailRetriever.goGoGadget();
-
-        Thread.sleep(60 * 1000 * 2);
-      } catch (final InterruptedException e1) {
-        e1.printStackTrace();
-      }
+    while(true) {
+      Thread.sleep(2 * 60 * 1000);
+      MailRetriever.goGoGadget();
     }
+
+    // TODO Run forever using below construct
+    // Run forever
+    //    final Object lock = new Object();
+    //    synchronized (lock) {
+    //      lock.wait();
+    //    }
   }
 }

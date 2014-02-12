@@ -39,14 +39,14 @@ import com.vividsolutions.jts.io.ParseException;
  */
 @SuppressWarnings("unchecked")
 public class MailReporter {
-  private static final String MESSAGE_SUBJECT = "[Lampje] %s, your personalized monthly ingress activity report. (report #2, December '13)";
+  private static final String MESSAGE_SUBJECT = "[Lampje] %s, your personalized monthly ingress activity report. (report #4, January '14)";
 
   private static final String smtpHost = "smtp.gmail.com";
 
   private static final String TRANSMISSION_BEGIN_IMAGE = "<img src=\"http://commondatastorage.googleapis.com/ingressemail/common/transmission-begin.gif\">";
   private static final String TRANSMISSION_END_IMAGE = "<img src=\"http://commondatastorage.googleapis.com/ingressemail/common/transmission-end.gif\">";
 
-  private static final String MESSAGE_SALUTATION_FORMAT = "<p style=\"font-size:17px;\">Greetings %s!</h2>" + "<p>This is your monthly personalized ingress activity report. Brought to you by Lampje.</p><p>This report contains all information retrieved in <b>December '13</b>.</p>";
+  private static final String MESSAGE_SALUTATION_FORMAT = "<p style=\"font-size:17px;\">Greetings %s!</h2>" + "<p>This is your monthly personalized ingress activity report. Brought to you by Lampje.</p><p>This report contains all information retrieved in <b>January '14</b>.</p>";
   private static final String MESSAGE_GREETING_FORMAT = "<p>Well. That's all we got so far. Consider this a test-run.</p><p>Be sure to pass along any suggestions you may have.</p><p>See you next month,<br />Lampje</p>";
   private static final String MESSAGE_DISCLAIMER_FORMAT = "<p><i>Replies to this email can and will not be read.</i></p>";
 
@@ -85,7 +85,7 @@ public class MailReporter {
 
   private static final String QUIRKS_DISCLAIMER = "<h3>Quirks / known bugs</h3><p>- The location is WRONG!<br /><i>We're sending the location described in the damage report to a geocoder service, which will give is a formatted address. This address is an approximation of the actual (exact) portal location, which is some cases may be way off (up to a few hundred metres, in farm-land areas and such.). Unfortunately there's nothing we can do about this without sniffing the ingress service, which is against the ToS)</i><p>- Some city reports are filed under '[cityName] railway station'!<br /><i>This is due to the google Geocoder returning a location categorized as Public Transport, which has a slightly different format. We're working on accounting for this in a future report.</i></p><p>- Some images don't appear to be loading!<br /><i>This is a weird Gmail quirk, just refresh the page.</i></p><p>- I can't see an area coverage thingy in some cities!<br /><i>We need at least 3 portals (with accurate locations) to draw a coloured polygon on the map. This is either a portal location issue, or the city report only contains 2 or less portals.</i></p>";
 
-  private static final String DEVELOPMENT_NOTES = "<h3>Development notes / Change log</h3><p>Changes:</p><ul><li>Basic GroupMe support for chat bot</li><li>Maps contain accurate polygon for area coverage</li></ul><p>Future updates:</p><ul><li>Friendly/enemy player area overlap stats</li><li>Nothing much</li></ul>";
+  private static final String DEVELOPMENT_NOTES = "<h3>Development notes / Change log</h3><p>Changes:</p><ul><li>I've stopped development on Lampje and decided to publish it on GitHub soon-ish. Lampje will be published here: <a href=\"https://github.com/JornC/ingress-lampje\">https://github.com/JornC/ingress-lampje</a></li><li>The chat API (XMPP and GroupMe interfaces available so far) has already been published and will be maintained. Available here: <a href=\"https://github.com/JornC/java-messaging\">https://github.com/JornC/java-messaging</a></li><li>Fear not! Lampje will remain online. It is currently self-sustained in a meter cupboard at an undisclosed location requiring no maintenance whatsoever.</ul>";
 
   private static final String ADDITIONAL_NOTES = "<h3>Additional notes</h3><p>The more players that are forwarding their ingress damage reports, the better we can correlate activity information and reflect that into reports such as this one. If you would, please pass along the forwarding instruction link to anyone interested: <a href=\"http://yogh.nl/lampje/\">http://yogh.nl/lampje/</a></p>";
 
@@ -128,20 +128,19 @@ public class MailReporter {
 
     reporter.fetchNationalStats();
 
-    // final ArrayList<Contributor> contributors =
-    // DBRepository.getContributors();
+    //    final ArrayList<Contributor> contributors = DBRepository.getContributors();
 
-    // final Contributor c = DBRepository.getContributorByEmail("");
-    // reporter.sendPlayerReport(c);
+    //    final Contributor c = DBRepository.getContributorByEmail("jorncruijsen@gmail.com");
+    //    reporter.sendPlayerReport(c);
 
-    // for (final Contributor c : contributors) {
-    // if (c.getEmail() == null) {
-    // System.out.println("No email for " + c.getName());
-    // continue;
-    // }
+    //    for (final Contributor c : contributors) {
+    //      if (c.getEmail() == null) {
+    //        System.out.println("No email for " + c.getName());
+    //        continue;
+    //      }
     //
-    // reporter.sendPlayerReport(c);
-    // }
+    //      reporter.sendPlayerReport(c);
+    //    }
   }
 
   public void sendPlayerReport(final Contributor c) throws ParseException, IOException {
@@ -156,6 +155,11 @@ public class MailReporter {
 
       // Get and configure the mail message
       final Message msg = getPlayerReportMessage(report);
+
+      if(report.getPlayerEncounters().isEmpty()) {
+        System.out.println("No activity for this player. (0 reports)");
+        return;
+      }
 
       System.out.println("Mailing to: " + c.getName() + " > " + c.getEmail());
 
@@ -194,23 +198,33 @@ public class MailReporter {
       final Map<String, Integer> players = playerEncounters.get(city);
       final Map<Portal, Integer> portals = portalEncounters.get(city);
 
+      // If there's no data, bug out.
+      if(players == null && portals == null) {
+        continue;
+      }
+
       builder.append(String.format(CITY_REPORT_FORMAT_START, city));
       builder.append(CITY_REPORT_SECTION_START);
 
       // Barcharts
-      builder.append(String.format(PLAYER_ENCOUNTER_FORMAT, players.size(), createDataChart(players, false)));
-      builder.append(String.format(PORTAL_ENCOUNTER_FORMAT, portals.size(), createDataChart(portals, true)));
+      if(players != null && !players.isEmpty()) {
+        builder.append(String.format(PLAYER_ENCOUNTER_FORMAT, players.size(), createDataChart(players, false)));
+      }
 
-      // Map coverage
-      String pathString;
-      pathString = ReportService.createAreaCoverageUrl(new ArrayList<Portal>(portals.keySet()), false);
-      if (!portals.isEmpty()) {
-        builder.append(CITY_REPORT_SECTION_END);
-        builder.append(CITY_REPORT_SECTION_START);
+      if(portals != null && !portals.isEmpty()) {
+        builder.append(String.format(PORTAL_ENCOUNTER_FORMAT, portals.size(), createDataChart(portals, true)));
 
-        final String imageUrl = String.format(AREA_IMAGE_URL, pathString);
+        // Map coverage
+        String pathString;
+        pathString = ReportService.createAreaCoverageUrl(new ArrayList<Portal>(portals.keySet()), false);
+        if (!portals.isEmpty()) {
+          builder.append(CITY_REPORT_SECTION_END);
+          builder.append(CITY_REPORT_SECTION_START);
 
-        builder.append(String.format(AREA_COVERAGE_FORMAT, imageUrl));
+          final String imageUrl = String.format(AREA_IMAGE_URL, pathString);
+
+          builder.append(String.format(AREA_COVERAGE_FORMAT, imageUrl));
+        }
       }
 
       // End the city report
@@ -219,13 +233,13 @@ public class MailReporter {
       builder.append(REPORT_BREAK);
     }
 
+    builder.append(DEVELOPMENT_NOTES);
+    builder.append(REPORT_BREAK);
+
     builder.append(INFORMATION_DISCLAIMER);
     builder.append(REPORT_BREAK);
 
     builder.append(QUIRKS_DISCLAIMER);
-    builder.append(REPORT_BREAK);
-
-    builder.append(DEVELOPMENT_NOTES);
     builder.append(REPORT_BREAK);
 
     builder.append(ADDITIONAL_NOTES);
